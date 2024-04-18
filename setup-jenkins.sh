@@ -10,3 +10,4 @@ helm repo add jenkins https://charts.jenkins.io || \
 
 echo "Use the command bellow to get an initial password"
 echo "kubectl exec --namespace jenkins -it svc/jenkins -c jenkins -- /bin/cat /run/secrets/additional/chart-admin-password && echo"
+echo "It might take a while, before a Jenkins container will be accessible..."
