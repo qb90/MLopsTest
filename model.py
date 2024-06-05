@@ -5,29 +5,11 @@ from transformers import (
     DataCollatorForTokenClassification,
     AutoModelForTokenClassification,
 )
+from transformers import TrainingArguments, Trainer
 
-conll2003 = datasets.load_dataset("conll2003")
-
-conll2003["train"][0]
-
-conll2003["train"].features["ner_tags"]
-
+data_path = "./data"
+conll2003 = datasets.load_dataset('conll2003', data_dir=data_path)
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
-
-example_text = conll2003["train"][0]
-example_text
-
-tokenized_input = tokenizer(example_text["tokens"], is_split_into_words=True)
-tokenized_input
-
-tokens = tokenizer.convert_ids_to_tokens(tokenized_input["input_ids"])
-tokens
-
-word_ids = tokenized_input.word_ids()
-word_ids
-
-len(example_text["ner_tags"]), len(tokenized_input["input_ids"])
-
 
 def tokenize_and_align_labels(example, label_all_tokens=True):
     tokenized_input = tokenizer(
@@ -74,6 +56,8 @@ label_list = conll2003["train"].features["ner_tags"].feature.names
 
 label_list
 
+example_text = conll2003["train"][0]
+
 labels = [label_list[i] for i in example_text["ner_tags"]]
 
 metric.compute(predictions=[labels], references=[labels])
@@ -118,8 +102,6 @@ def compute_metrics(eval_preds):
         "accuracy": results["overall_accuracy"],
     }
 
-
-from transformers import TrainingArguments, Trainer
 
 args = TrainingArguments(
     "test-ner",
