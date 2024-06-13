@@ -6,11 +6,15 @@ pipeline {
                 checkout scm
             }
         }
+        stage("Download image") {
+            steps {
+                docker.pull('korzepadawid/mlops:latest')
+            }
+        }
         stage('Load data') {
             steps {
                 script {
-                    def mlopsImage = docker.build('mlops')
-                    mlopsImage.inside {
+                    docker.image('korzepadawid/mlops:latest').inside {
                         sh 'python3 ./load_data.py'
                         archiveArtifacts artifacts: 'data.zip', onlyIfSuccessful: true
                     }
