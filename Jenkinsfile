@@ -6,11 +6,6 @@ pipeline {
                 checkout scm
             }
         }
-        stage("Download image") {
-            steps {
-                docker.pull('korzepadawid/mlops:latest')
-            }
-        }
         stage('Load data') {
             steps {
                 script {
