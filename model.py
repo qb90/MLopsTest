@@ -1,15 +1,25 @@
+import os
+import zipfile
 import datasets
 import numpy as np
+import shutil
+
 from transformers import (
     BertTokenizerFast,
     DataCollatorForTokenClassification,
     AutoModelForTokenClassification,
+    TrainingArguments,
+    Trainer,
 )
-from transformers import TrainingArguments, Trainer
 
-data_path = "./data"
-conll2003 = datasets.load_dataset('conll2003', data_dir=data_path)
+data_archive = "./data.zip"
+data_path = "./data-conll2003"
+shutil.unpack_archive(data_archive, data_path, "zip")
+print(f"Unzipped data {data_archive} to {data_path}")
+
+conll2003 = datasets.load_dataset("conll2003", data_dir=data_path)
 tokenizer = BertTokenizerFast.from_pretrained("bert-base-uncased")
+
 
 def tokenize_and_align_labels(example, label_all_tokens=True):
     tokenized_input = tokenizer(
@@ -132,3 +142,20 @@ trainer.train()
 model.save_pretrained("ner_model")
 
 tokenizer.save_pretrained("tokenizer")
+
+
+def zip_directory(directory_path, zip_path):
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, _, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, os.path.relpath(file_path, directory_path))
+
+
+ner_path = "ner_model.zip"
+zip_directory("ner_model", ner_path)
+print(f"Model successfully saved to {ner_path}")
+
+tokenizer_path = "tokenizer.zip"
+zip_directory("tokenizer", tokenizer_path)
+print(f"Tokenuizer successfully saved to {tokenizer_path}")

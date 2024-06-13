@@ -12,6 +12,7 @@ pipeline {
                     def mlopsImage = docker.build('mlops')
                     mlopsImage.inside {
                         sh 'python3 ./load_data.py'
+                        archiveArtifacts artifacts: 'data.zip', onlyIfSuccessful: true
                     }
                 }
             }
@@ -19,9 +20,11 @@ pipeline {
         stage('Train') {
             steps {
                 script {
-                    def mlopsImage = docker.build('mlops')
-                    mlopsImage.inside {
-                        sh 'python3 ./model.py'
+                    def dockerVersion = sh(returnStdout: true, script: 'docker --version')
+                    echo "Output: ${dockerVersion}"
+                    docker.image('korzepadawid/mlops:latest').inside {
+                        sh 'python ./model.py'
+                        archiveArtifacts artifacts: 'ner_model.zip, tokenizer.zip', onlyIfSuccessful: true
                     }
                 }
             }
