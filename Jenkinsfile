@@ -23,6 +23,7 @@ pipeline {
                     echo "Output: ${dockerVersion}"
                     docker.image('korzepadawid/mlops:latest').inside {
                         sh 'python ./model.py'
+                        sh 'python ./predict.py'
                         archiveArtifacts artifacts: 'ner_model.zip, tokenizer.zip', onlyIfSuccessful: true
                     }
                 }
