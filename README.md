@@ -2,7 +2,7 @@
 The project developed during the machine learning engineering classes at AMU.
 
 ##
-Jenkins test
+Jenkins test github integration
 
 ## Required
 - [Kubernetes](https://kubernetes.io/)
