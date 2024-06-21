@@ -24,7 +24,7 @@ pipeline {
                     docker.image('korzepadawid/mlops:latest').inside {
                         sh 'python ./model.py'
                         sh 'python ./predict.py'
-                        archiveArtifacts artifacts: 'ner_model.zip, tokenizer.zip', onlyIfSuccessful: true
+                        archiveArtifacts artifacts: 'ner_model.zip, tokenizer.zip, ner_results.json', onlyIfSuccessful: true
                     }
                 }
             }
